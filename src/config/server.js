@@ -12,6 +12,12 @@ app.get('/', async (req, res) => {
     res.status(500).send('Erro ao conectar ao banco de dados');
   }
 });
+/* const res = await pool.query(`
+  SELECT table_name 
+  FROM information_schema.tables 
+  WHERE table_schema = 'public';
+`);
+console.log('Tabelas no banco:', res.rows); */
 
 app.listen(3000);
 console.log('Server está rodando em http://localhost:3000');
