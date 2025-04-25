@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model associacao {
+  id_associacao String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nome          String     @db.VarChar(30)
+  descricao     String     @db.VarChar(100)
+  vendedor      vendedor[]
+}
+
+model atende_um {
+  id_pedido   Int
+  id_vendedor String   @db.Uuid
+  pedido      pedido   @relation(fields: [id_pedido], references: [pedido_id], onDelete: NoAction, onUpdate: NoAction)
+  vendedor    vendedor @relation(fields: [id_vendedor], references: [id_vendedor], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([id_pedido, id_vendedor])
+}
+
+model cliente {
+  cpf      String   @id @db.VarChar(11)
+  nome     String   @db.VarChar(50)
+  email    String   @db.VarChar(30)
+  telefone String   @db.VarChar(10)
+  pedido   pedido[]
+}
+
+model feira {
+  id_feira Int      @id @default(autoincrement())
+  nome     String   @db.VarChar(80)
+  endereco String   @db.VarChar(120)
+  pedido   pedido[]
+}
+
+model pedido {
+  pedido_id        Int         @id @default(autoincrement())
+  data_pedido      DateTime    @default(dbgenerated("CURRENT_DATE")) @db.Date
+  endereco_entrega String      @db.VarChar(100)
+  fk_feira         Int?
+  fk_cliente       String?     @db.VarChar(11)
+  atende_um        atende_um[]
+  cliente          cliente?    @relation(fields: [fk_cliente], references: [cpf], onDelete: NoAction, onUpdate: NoAction, map: "fk_cliente")
+  feira            feira?      @relation(fields: [fk_feira], references: [id_feira], onDelete: NoAction, onUpdate: NoAction, map: "fk_feira")
+  produto          produto[]
+}
+
+model produto {
+  id_produto  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nome        String    @db.VarChar(80)
+  categoria   String    @db.VarChar(80)
+  qntd        Int
+  data_coleta DateTime  @db.Date
+  preco       Float
+  id_pedido   Int?
+  fk_vendedor String?   @db.Uuid
+  vendedor    vendedor? @relation(fields: [fk_vendedor], references: [id_vendedor], onDelete: NoAction, onUpdate: NoAction, map: "fk_vendedor")
+  pedido      pedido?   @relation(fields: [id_pedido], references: [pedido_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model vendedor {
+  nome             String         @db.VarChar(100)
+  telefone         String         @db.VarChar(15)
+  endereco_venda   String         @db.VarChar(100)
+  tipo_vendedor    tipo_vendedor
+  tipo_documento   tipo_documento
+  numero_documento String?        @db.VarChar(20)
+  id_vendedor      String         @id @db.Uuid
+  fk_associacao    String?        @db.Uuid
+  atende_um        atende_um[]
+  produto          produto[]
+  associacao       associacao?    @relation(fields: [fk_associacao], references: [id_associacao], onDelete: NoAction, onUpdate: NoAction, map: "fk_associacao")
+}
+
+enum tipo_documento {
+  CPF
+  CNPJ
+}
+
+enum tipo_vendedor {
+  PF
+  PJ
+}

@@ -1,0 +1,55 @@
+import express from 'express';
+import prisma from './config/dbconn';
+import clienteRoutes from './routes/clientes'; // Importando as rotas de clientes
+import associacaoRoutes from './routes/associacao'; // Importando as rotas de associacao */
+import atendeUmRoutes from './routes/atende_um'; // Importando as rotas de associado
+import feiraRoutes from './routes/feira'; // Importando as rotas de feira
+import pedidoRoutes from './routes/pedido'; // Importando as rotas de pedido
+import produtoRoutes from './routes/produto'; // Importando as rotas de produto
+import vendedorRoutes from './routes/vendedor'; // Importando as rotas de vendedor
+
+ const app = express();
+ const port = 3000;
+
+// Rota principal para verificar conexão com o banco
+app.get('/', async (req, res) => {
+  try {
+    const result = await prisma.$queryRawUnsafe<{ now: string }[]>(`SELECT NOW()`);
+    res.send(`Hora atual no banco: ${result[0].now}`);
+  } catch (err) {
+    console.error('Erro ao conectar ao banco:', err);
+    res.status(500).send('Erro ao conectar ao banco de dados');
+  }
+});
+app.get('/tables', async (req, res) => {
+  try {
+    const tables = await prisma.$queryRawUnsafe<{ table_name: string }[]>(
+      `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'`
+    );
+    res.json(tables.map((table) => table.table_name));
+  } catch (err) {
+    console.error('Erro ao listar tabelas:', err);
+    res.status(500).send('Erro ao listar tabelas do banco de dados');
+  }
+});
+
+// Configurando as rotas de clientes
+app.use('/clientes', clienteRoutes);
+console.log('[INFO] Rotas de cliente carregadas');
+app.use('/associacao', associacaoRoutes); // Configurando as rotas de associacao
+console.log('[INFO] Rotas de atende um carregadas');
+app.use('/atendeum', atendeUmRoutes); // Configurando as rotas de associado
+console.log('[INFO] Rotas de associado carregadas');
+app.use('/pedido', pedidoRoutes); // Configurando as rotas de clienteVendedor
+console.log('[INFO] Rotas de pedidos carregadas');
+app.use('/feira', feiraRoutes); // Configurando as rotas de feira
+console.log('[INFO] Rotas de feira carregadas');
+app.use('/produto', produtoRoutes); // Configurando as rotas de produto
+console.log('[INFO] Rotas de produto carregadas');
+app.use('/vendedor', vendedorRoutes); // Configurando as rotas de vendedor
+console.log('[INFO] Rotas de vendedor carregadas');
+// Iniciando o servido
+
+app.listen(port, () => {
+  console.log(`Server rodando em http://localhost:${port}`);
+});
