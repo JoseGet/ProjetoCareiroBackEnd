@@ -1,6 +1,6 @@
 // src/index.ts
 import express from 'express';
-import prisma from './dbconn';
+import prisma from './dbConfig';
 
 const app = express();
 const port = 3000;

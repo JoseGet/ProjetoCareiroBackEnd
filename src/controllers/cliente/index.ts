@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import prisma from '../../config/dbconn'; // PrismaClient instanciado
+import prisma from '../../config/dbConfig'; // PrismaClient instanciado
 import { cliente } from '@prisma/client'; // Importando o tipo cliente do Prisma
 
 export const listarClientes = async (req: Request, res: Response): Promise<void> => {

@@ -1,5 +1,5 @@
 import express from 'express';
-import prisma from './config/dbconn';
+import prisma from './config/dbConfig';
 import clienteRoutes from './routes/clientes'; // Importando as rotas de clientes
 import associacaoRoutes from './routes/associacao'; // Importando as rotas de associacao */
 import atendeUmRoutes from './routes/atende_um'; // Importando as rotas de associado

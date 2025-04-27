@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import prisma from '../../config/dbconn'; // Importe o cliente Prisma corretamente
+import prisma from '../../config/dbConfig'; // Importe o cliente Prisma corretamente
 import { produto } from '@prisma/client'; // Importando o tipo 'produto' gerado pelo Prisma
 
 export const getProdutos = async (req: Request, res: Response) => {
