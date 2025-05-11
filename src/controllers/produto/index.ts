@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import prisma from '../../config/dbConfig'; // Importe o cliente Prisma corretamente
 import { produto } from '@prisma/client'; // Importando o tipo 'produto' gerado pelo Prisma
 
+
 export const getProdutos = async (req: Request, res: Response) => {
   try {
     // Utilizando o Prisma com a tipagem explícita
@@ -36,15 +37,22 @@ export const getProdutoById = async (req: Request, res: Response) => {
 };
 
 export const createProduto = async (req: Request, res: Response) => {
-  const { nome, categoria, unidade, preco }: { nome: string, categoria: string, unidade: string, preco: number } = req.body;
+  const { nome, categoria, preco, qntd, vendedorId, pedidoId}: 
+  { nome: string, categoria: string, unidade: string, preco: number, qntd: number, vendedorId: string, pedidoId: number} = req.body;
   try {
     const result: produto = await prisma.produto.create({
       data: {
         nome,
         categoria,
         preco,
-        qntd: 0, // Provide a default value or retrieve it from req.body
+        qntd, // Provide a default value or retrieve it from req.body
         data_coleta: new Date(), // Provide a default value or retrieve it from req.body
+        vendedor: {
+          connect: { id_vendedor: vendedorId }, 
+        },
+        pedido: {
+          connect: { pedido_id: pedidoId }, 
+        },
       },
     });
     res.status(201).json(result);

@@ -49,13 +49,12 @@ export const getPedidoById = async (req: Request, res: Response): Promise<void> 
 
 // POST: Criar novo pedido com produtos
 export const createPedido = async (req: Request, res: Response): Promise<void> => {
-  const { data_pedido, endereco_entrega, fk_feira, fk_cliente, produtos } = req.body;
+  const { data_pedido, fk_feira, fk_cliente, produtos } = req.body;
 
   try {
     const novoPedido: pedido = await prisma.pedido.create({
       data: {
         data_pedido: new Date(data_pedido),
-        endereco_entrega,
         fk_feira,
         fk_cliente,
         produto: {
@@ -77,14 +76,13 @@ export const createPedido = async (req: Request, res: Response): Promise<void> =
 // PUT: Atualizar pedido
 export const updatePedido = async (req: Request, res: Response): Promise<void> => {
   const id = parseInt(req.params.id);
-  const { data_pedido, endereco_entrega, fk_feira, fk_cliente, produtos } = req.body;
+  const { data_pedido, fk_feira, fk_cliente, produtos } = req.body;
 
   try {
     const pedidoAtualizado: pedido = await prisma.pedido.update({
       where: { pedido_id: id },
       data: {
         data_pedido: new Date(data_pedido),
-        endereco_entrega,
         fk_feira,
         fk_cliente,
         produto: {

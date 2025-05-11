@@ -11,6 +11,8 @@ import vendedorRoutes from './routes/vendedor'; // Importando as rotas de vended
  const app = express();
  const port = 3000;
 
+ app.use(express.json());
+
 // Rota principal para verificar conexão com o banco
 app.get('/', async (req, res) => {
   try {

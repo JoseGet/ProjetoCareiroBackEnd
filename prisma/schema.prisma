@@ -10,8 +10,8 @@ datasource db {
 
 model associacao {
   id_associacao String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  nome          String     @db.VarChar(30)
-  descricao     String     @db.VarChar(100)
+  nome          String
+  descricao     String
   vendedor      vendedor[]
 }
 
@@ -26,53 +26,54 @@ model atende_um {
 
 model cliente {
   cpf      String   @id @db.VarChar(11)
-  nome     String   @db.VarChar(50)
-  email    String   @db.VarChar(30)
-  telefone String   @db.VarChar(10)
+  nome     String
+  email    String   @unique
+  telefone String   @db.VarChar(11)
+  senha    String   @db.VarChar(100)
   pedido   pedido[]
 }
 
 model feira {
   id_feira Int      @id @default(autoincrement())
-  nome     String   @db.VarChar(80)
-  endereco String   @db.VarChar(120)
+  nome     String
+  endereco String
   pedido   pedido[]
 }
 
 model pedido {
-  pedido_id        Int         @id @default(autoincrement())
-  data_pedido      DateTime    @default(dbgenerated("CURRENT_DATE")) @db.Date
-  endereco_entrega String      @db.VarChar(100)
-  fk_feira         Int?
-  fk_cliente       String?     @db.VarChar(11)
-  atende_um        atende_um[]
-  cliente          cliente?    @relation(fields: [fk_cliente], references: [cpf], onDelete: NoAction, onUpdate: NoAction, map: "fk_cliente")
-  feira            feira?      @relation(fields: [fk_feira], references: [id_feira], onDelete: NoAction, onUpdate: NoAction, map: "fk_feira")
-  produto          produto[]
+  pedido_id   Int         @id @default(autoincrement())
+  data_pedido DateTime    @default(dbgenerated("CURRENT_DATE")) @db.Date
+  fk_feira    Int?
+  fk_cliente  String      @db.VarChar(11)
+  atende_um   atende_um[]
+  cliente     cliente     @relation(fields: [fk_cliente], references: [cpf], onDelete: NoAction, onUpdate: NoAction, map: "fk_cliente")
+  feira       feira?      @relation(fields: [fk_feira], references: [id_feira], onDelete: NoAction, onUpdate: NoAction, map: "fk_feira")
+  produto     produto[]
 }
 
 model produto {
-  id_produto  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  nome        String    @db.VarChar(80)
-  categoria   String    @db.VarChar(80)
+  id_produto  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nome        String
+  categoria   String
   qntd        Int
-  data_coleta DateTime  @db.Date
+  data_coleta DateTime @db.Date
   preco       Float
-  id_pedido   Int?
-  fk_vendedor String?   @db.Uuid
-  vendedor    vendedor? @relation(fields: [fk_vendedor], references: [id_vendedor], onDelete: NoAction, onUpdate: NoAction, map: "fk_vendedor")
-  pedido      pedido?   @relation(fields: [id_pedido], references: [pedido_id], onDelete: NoAction, onUpdate: NoAction)
+  id_pedido   Int
+  fk_vendedor String   @db.Uuid
+  vendedor    vendedor @relation(fields: [fk_vendedor], references: [id_vendedor], onDelete: NoAction, onUpdate: NoAction, map: "fk_vendedor")
+  pedido      pedido   @relation(fields: [id_pedido], references: [pedido_id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model vendedor {
-  nome             String         @db.VarChar(100)
+  nome             String
   telefone         String         @db.VarChar(15)
-  endereco_venda   String         @db.VarChar(100)
+  endereco_venda   String
   tipo_vendedor    tipo_vendedor
   tipo_documento   tipo_documento
-  numero_documento String?        @db.VarChar(20)
+  numero_documento String
   id_vendedor      String         @id @db.Uuid
   fk_associacao    String?        @db.Uuid
+  senha            String         @db.VarChar(100)
   atende_um        atende_um[]
   produto          produto[]
   associacao       associacao?    @relation(fields: [fk_associacao], references: [id_associacao], onDelete: NoAction, onUpdate: NoAction, map: "fk_associacao")

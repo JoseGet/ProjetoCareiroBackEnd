@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import prisma from '../../config/dbConfig';
 import { vendedor } from '@prisma/client';
 
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
 // Função para obter todos os vendedores
 export const getVendedores = async (req: Request, res: Response) => {
   try {
@@ -35,7 +38,7 @@ export const getVendedorById = async (req: Request, res: Response) => {
 
 // Função para criar um novo vendedor
 export const createVendedor = async (req: Request, res: Response) => {
-  const { nome, tipo_vendedor, telefone, endereco_venda, tipo_documento, numero_documento, fk_associacao } = req.body;
+  const { nome, tipo_vendedor, telefone, endereco_venda, tipo_documento, numero_documento, fk_associacao, senha } = req.body;
 
   try {
     const result = await prisma.vendedor.create({
@@ -48,6 +51,7 @@ export const createVendedor = async (req: Request, res: Response) => {
         tipo_documento,
         numero_documento: numero_documento || null,
         fk_associacao: fk_associacao || null,
+        senha
       },
     });
 
@@ -61,9 +65,12 @@ export const createVendedor = async (req: Request, res: Response) => {
 // Função para atualizar um vendedor
 export const updateVendedor = async (req: Request, res: Response) => {
   const id = req.params.id;
-  const { nome, tipo_vendedor, telefone, endereco_venda, tipo_documento, numero_documento, fk_associacao } = req.body;
+  const { nome, tipo_vendedor, telefone, endereco_venda, tipo_documento, numero_documento, fk_associacao, senha } = req.body;
 
   try {
+
+    const senha_segura = await bcrypt.hash(senha, saltRounds);
+
     const result = await prisma.vendedor.update({
       where: { id_vendedor: id },
       data: {
@@ -74,6 +81,7 @@ export const updateVendedor = async (req: Request, res: Response) => {
         tipo_documento,
         numero_documento,
         fk_associacao,
+        senha:senha_segura
       },
     });
 

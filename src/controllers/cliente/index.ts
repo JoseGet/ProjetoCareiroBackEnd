@@ -1,6 +1,10 @@
 import { Request, Response } from 'express';
 import prisma from '../../config/dbConfig'; // PrismaClient instanciado
 import { cliente } from '@prisma/client'; // Importando o tipo cliente do Prisma
+import { error } from 'console';
+
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 export const listarClientes = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -33,11 +37,15 @@ export const listarClientesPorId = async (req: Request, res: Response): Promise<
 };
 
 export const criarCliente = async (req: Request, res: Response): Promise<void> => {
-  const { cpf, nome, email, telefone } = req.body;
+  const { cpf, nome, email, telefone, senha} = req.body;
 
+  
   try {
+
+    const senha_segura = await bcrypt.hash(senha, saltRounds);
+
     const novoCliente: cliente = await prisma.cliente.create({
-      data: { cpf, nome, email, telefone },
+      data: { cpf, nome, email, telefone, senha: senha_segura},
     });
 
     res.status(201).json(novoCliente);
@@ -49,12 +57,15 @@ export const criarCliente = async (req: Request, res: Response): Promise<void> =
 
 export const atualizarCliente = async (req: Request, res: Response): Promise<void> => {
   const { cpf } = req.params;
-  const { nome, email, telefone } = req.body;
+  const { nome, email, telefone, senha } = req.body;
 
   try {
+
+    const senha_segura = await bcrypt.hash(senha, saltRounds);
+
     const clienteAtualizado: cliente = await prisma.cliente.update({
       where: { cpf },
-      data: { nome, email, telefone },
+      data: { nome, email, telefone, senha:senha_segura},
     });
 
     res.json(clienteAtualizado);
