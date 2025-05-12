@@ -5,10 +5,15 @@
     "moduleResolution": "Node",
     "outDir": "./dist",
     "rootDir": "./src",
+    "baseUrl": "./src",  // Define o baseUrl corretamente para src
     "esModuleInterop": true,
     "strict": true,
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "*": ["src/types/*"]  // Corrija para src/types/*, pois o baseUrl é ./src
+    }
   },
-  "include": ["src"]
+  "include": ["src/**/*", "src/types"]
 }
