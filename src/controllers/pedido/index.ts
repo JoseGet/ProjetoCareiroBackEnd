@@ -37,7 +37,6 @@ export const getPedidoById = async (req: Request, res: Response): Promise<void> 
 
     if (!pedido) {
       res.status(404).send('Pedido não encontrado');
-      return;
     }
 
     res.json(pedido);
@@ -80,7 +79,7 @@ export const updatePedido = async (req: Request, res: Response): Promise<void> =
   const { data_pedido, endereco_entrega, fk_feira, fk_cliente, produtos } = req.body;
 
   try {
-    const pedidoAtualizado: pedido = await prisma.pedido.update({
+    const pedidoAtualizado: pedido | null = await prisma.pedido.update({
       where: { pedido_id: id },
       data: {
         data_pedido: new Date(data_pedido),
@@ -107,7 +106,7 @@ export const updatePedido = async (req: Request, res: Response): Promise<void> =
 export const deletePedido = async (req: Request, res: Response): Promise<void> => {
   const id = parseInt(req.params.id);
   try {
-    const pedidoDeletado: pedido = await prisma.pedido.delete({
+    const pedidoDeletado: pedido | null = await prisma.pedido.delete({
       where: { pedido_id: id }
     });
 

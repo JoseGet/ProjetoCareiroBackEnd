@@ -5,7 +5,7 @@ import { vendedor } from '@prisma/client';
 // Função para obter todos os vendedores
 export const getVendedores = async (req: Request, res: Response) => {
   try {
-    const result = await prisma.vendedor.findMany();
+    const result: vendedor[] = await prisma.vendedor.findMany();
     console.log("aqui no vendedores");
     res.json(result);
   } catch (error) {
@@ -18,7 +18,7 @@ export const getVendedores = async (req: Request, res: Response) => {
 export const getVendedorById = async (req: Request, res: Response) => {
   const id = req.params.id;
   try {
-    const result = await prisma.vendedor.findUnique({
+    const result: vendedor | null = await prisma.vendedor.findUnique({
       where: { id_vendedor: id },
     });
 
@@ -38,7 +38,7 @@ export const createVendedor = async (req: Request, res: Response) => {
   const { nome, tipo_vendedor, telefone, endereco_venda, tipo_documento, numero_documento, fk_associacao } = req.body;
 
   try {
-    const result = await prisma.vendedor.create({
+    const result: vendedor = await prisma.vendedor.create({
       data: {
         id_vendedor: crypto.randomUUID(),
         nome,
@@ -64,7 +64,7 @@ export const updateVendedor = async (req: Request, res: Response) => {
   const { nome, tipo_vendedor, telefone, endereco_venda, tipo_documento, numero_documento, fk_associacao } = req.body;
 
   try {
-    const result = await prisma.vendedor.update({
+    const result: vendedor | null = await prisma.vendedor.update({
       where: { id_vendedor: id },
       data: {
         nome,
@@ -92,7 +92,7 @@ export const updateVendedor = async (req: Request, res: Response) => {
 export const deleteVendedor = async (req: Request, res: Response) => {
   const id = req.params.id;
   try {
-    const result = await prisma.vendedor.delete({
+    const result: vendedor | null = await prisma.vendedor.delete({
       where: { id_vendedor: id },
     });
 

@@ -16,16 +16,16 @@ export const listarClientes = async (req: Request, res: Response): Promise<void>
 export const listarClientesPorId = async (req: Request, res: Response): Promise<void> => {
   const { cpf } = req.params;
   try {
-    const clienteEncontrado: cliente | null = await prisma.cliente.findUnique({
+    const cliente = await prisma.cliente.findUnique({
       where: { cpf },
     });
 
-    if (!clienteEncontrado) {
+    if (!cliente) {
       res.status(404).send('Cliente não encontrado');
       return;
     }
 
-    res.json(clienteEncontrado);
+    res.json(cliente);
   } catch (error) {
     console.error('Erro ao buscar cliente:', error);
     res.status(500).send('Erro ao buscar cliente');
@@ -34,10 +34,11 @@ export const listarClientesPorId = async (req: Request, res: Response): Promise<
 
 export const criarCliente = async (req: Request, res: Response): Promise<void> => {
   const { cpf, nome, email, telefone } = req.body;
-
+  console.log("aqui no cliente criar cliente", cpf, nome, email, telefone);
   try {
-    const novoCliente: cliente = await prisma.cliente.create({
+    const novoCliente = await prisma.cliente.create({
       data: { cpf, nome, email, telefone },
+
     });
 
     res.status(201).json(novoCliente);
@@ -52,11 +53,12 @@ export const atualizarCliente = async (req: Request, res: Response): Promise<voi
   const { nome, email, telefone } = req.body;
 
   try {
-    const clienteAtualizado: cliente = await prisma.cliente.update({
+    const clienteAtualizado = await prisma.cliente.update({
       where: { cpf },
       data: { nome, email, telefone },
     });
 
+    console.log('Cliente atualizado:', clienteAtualizado);
     res.json(clienteAtualizado);
   } catch (error: any) {
     if (error.code === 'P2025') {
@@ -72,7 +74,7 @@ export const deletarCliente = async (req: Request, res: Response): Promise<void>
   const { cpf } = req.params;
 
   try {
-    const clienteDeletado: cliente = await prisma.cliente.delete({
+    const clienteDeletado = await prisma.cliente.delete({
       where: { cpf },
     });
 

@@ -1,5 +1,7 @@
 import express from 'express';
 import prisma from './config/dbconn';
+import jsonwebtoken from 'jsonwebtoken';
+import cors from 'cors';
 import clienteRoutes from './routes/clientes'; // Importando as rotas de clientes
 import associacaoRoutes from './routes/associacao'; // Importando as rotas de associacao */
 import atendeUmRoutes from './routes/atende_um'; // Importando as rotas de associado
@@ -8,9 +10,11 @@ import pedidoRoutes from './routes/pedido'; // Importando as rotas de pedido
 import produtoRoutes from './routes/produto'; // Importando as rotas de produto
 import vendedorRoutes from './routes/vendedor'; // Importando as rotas de vendedor
 
- const app = express();
- const port = 3000;
 
+const app = express();
+app.use(express.json());
+const port = 3000;
+app.use(cors());
 // Rota principal para verificar conexão com o banco
 app.get('/', async (req, res) => {
   try {

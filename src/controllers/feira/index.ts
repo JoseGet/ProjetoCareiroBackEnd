@@ -18,13 +18,12 @@ export const getFeiras = async (req: Request, res: Response): Promise<void> => {
 export const getFeiraById = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   try {
-    const feira: feira | null = await prisma.feira.findUnique({
+    const feira = await prisma.feira.findUnique({
       where: { id_feira: parseInt(id) },
     });
 
     if (!feira) {
       res.status(404).send('Feira não encontrada');
-      return;
     }
 
     res.json(feira);
@@ -38,7 +37,7 @@ export const getFeiraById = async (req: Request, res: Response): Promise<void> =
 export const createFeira = async (req: Request, res: Response): Promise<void> => {
   const { nome, endereco } = req.body;
   try {
-    const novaFeira: feira = await prisma.feira.create({
+    const novaFeira = await prisma.feira.create({
       data: { nome, endereco },
     });
 
@@ -53,7 +52,7 @@ export const createFeira = async (req: Request, res: Response): Promise<void> =>
 export const updateFeira = async (req: Request, res: Response): Promise<void> => {
   const { id_feira, nome, endereco } = req.body;
   try {
-    const feiraAtualizada: feira = await prisma.feira.update({
+    const feiraAtualizada = await prisma.feira.update({
       where: { id_feira: parseInt(id_feira) },
       data: { nome, endereco },
     });
@@ -69,7 +68,7 @@ export const updateFeira = async (req: Request, res: Response): Promise<void> =>
 export const deleteFeira = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   try {
-    const feiraDeletada: feira = await prisma.feira.delete({
+    const feiraDeletada = await prisma.feira.delete({
       where: { id_feira: parseInt(id) },
     });
 

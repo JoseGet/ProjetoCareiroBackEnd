@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get('/', getFeiras);
 router.get('/:id', getFeiraById);
-router.post('/cadastro', createFeira);
+router.post('/', createFeira);
 router.put('/:id', updateFeira);
 router.delete('/:id', deleteFeira);
 

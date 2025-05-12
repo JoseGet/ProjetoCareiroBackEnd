@@ -42,6 +42,7 @@ export const createProduto = async (req: Request, res: Response) => {
       data: {
         nome,
         categoria,
+        // unidade, // Removed as it does not exist in the Prisma schema
         preco,
         qntd: 0, // Provide a default value or retrieve it from req.body
         data_coleta: new Date(), // Provide a default value or retrieve it from req.body
@@ -56,7 +57,7 @@ export const createProduto = async (req: Request, res: Response) => {
 
 export const updateProduto = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id, 10);
-  const { nome, categoria, unidade, preco }: { nome: string, categoria: string, unidade: string, preco: number } = req.body;
+  const { nome, categoria, preco }: { nome: string, categoria: string, unidade: string, preco: number } = req.body;
   try {
     const result: produto | null = await prisma.produto.update({
       where: {
