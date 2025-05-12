@@ -42,14 +42,14 @@ export const criarCliente = async (req: Request, res: Response): Promise<void> =
     return;
   }
   try {
-
+    console.log("aqui no criar cliente");
     const senha_segura = await bcrypt.hash(senha, saltRounds);
 
     const novoCliente: cliente = await prisma.cliente.create({
       data: { cpf, nome, email, telefone, senha: senha_segura},
 
     });
-    
+    console.log('Cliente criado:', novoCliente);
 
     res.status(201).json(novoCliente);
   } catch (error) {

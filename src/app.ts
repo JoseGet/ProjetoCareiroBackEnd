@@ -7,11 +7,14 @@ import feiraRoutes from './routes/feira'; // Importando as rotas de feira
 import pedidoRoutes from './routes/pedido'; // Importando as rotas de pedido
 import produtoRoutes from './routes/produto'; // Importando as rotas de produto
 import vendedorRoutes from './routes/vendedor'; // Importando as rotas de vendedor
-
+import authRoutes from './routes/authRoutes'; // Importando as rotas de autenticação
+import cors from 'cors';
 
 const app = express();
 app.use(express.json());
 const port = 3000;
+
+app.use(cors()); // Habilitando CORS para todas as rotas
 // Rota principal para verificar conexão com o banco
 app.get('/', async (req, res) => {
   try {
@@ -49,6 +52,8 @@ app.use('/produto', produtoRoutes); // Configurando as rotas de produto
 console.log('[INFO] Rotas de produto carregadas');
 app.use('/vendedor', vendedorRoutes); // Configurando as rotas de vendedor
 console.log('[INFO] Rotas de vendedor carregadas');
+app.use('/auth', authRoutes); // Configurando as rotas de autenticação
+console.log('[INFO] Rotas de autenticação carregadas');
 // Iniciando o servido
 
 app.listen(port, () => {

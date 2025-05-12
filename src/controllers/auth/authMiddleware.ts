@@ -1,0 +1,30 @@
+import { Request, Response, NextFunction } from 'express';
+
+// Extending the Request interface to include the 'user' property
+declare global {
+  namespace Express {
+    interface Request {
+      user?: any;
+    }
+  }
+}
+import { verifyToken } from './jwt';
+
+export const autenticarToken = (req: Request, res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Token não fornecido' });
+  }
+
+  const token = authHeader.split(' ')[1];
+  const payload = verifyToken(token);
+
+  if (!payload) {
+    return res.status(403).json({ error: 'Token inválido ou expirado' });
+  }
+
+  // Adiciona os dados do usuário ao request
+  req.user = payload;
+  next();
+};
