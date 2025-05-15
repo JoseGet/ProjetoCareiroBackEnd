@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import prisma from "../../config/dbConfig";
 import bcrypt from "bcrypt";
-import { generateToken } from "./jwt";
+import { gerarToken } from "./jwt";
 
 export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -26,7 +26,7 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
       return;
     }
 
-    const token = generateToken({ cpf: cliente.cpf, email: cliente.email });
+    const token = gerarToken({ cpf: cliente.cpf, email: cliente.email });
 
     res.status(200).json({
       token,
