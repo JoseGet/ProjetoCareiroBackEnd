@@ -8,6 +8,7 @@ import pedidoRoutes from './routes/pedido'; // Importando as rotas de pedido
 import produtoRoutes from './routes/produto'; // Importando as rotas de produto
 import vendedorRoutes from './routes/vendedor'; // Importando as rotas de vendedor
 import authRoutes from './routes/authRoutes'; // Importando as rotas de autenticação
+import { autenticarToken } from './controllers/auth/authMiddleware';
 import cors from 'cors';
 
 const app = express();
@@ -16,7 +17,7 @@ const port = 3000;
 
 app.use(cors()); // Habilitando CORS para todas as rotas
 // Rota principal para verificar conexão com o banco
-app.get('/', async (req, res) => {
+/* app.get('/', async (req, res) => {
   try {
     const result = await prisma.$queryRawUnsafe<{ now: string }[]>(`SELECT NOW()`);
     res.send(`Hora atual no banco: ${result[0].now}`);
@@ -35,8 +36,10 @@ app.get('/tables', async (req, res) => {
     console.error('Erro ao listar tabelas:', err);
     res.status(500).send('Erro ao listar tabelas do banco de dados');
   }
+}); */
+app.get('/protegido', autenticarToken, (req, res) => { 
+  res.send(`Rota protegida, você está autenticado!, acesso permitido ${req.user.email}`);
 });
-
 // Configurando as rotas de clientes
 app.use('/clientes', clienteRoutes);
 console.log('[INFO] Rotas de cliente carregadas');
