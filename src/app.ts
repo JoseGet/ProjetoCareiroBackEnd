@@ -1,5 +1,4 @@
 import express from 'express';
-import prisma from './config/dbConfig';
 import clienteRoutes from './routes/clientes'; // Importando as rotas de clientes
 import associacaoRoutes from './routes/associacao'; // Importando as rotas de associacao */
 import atendeUmRoutes from './routes/atende_um'; // Importando as rotas de associado
@@ -9,6 +8,7 @@ import produtoRoutes from './routes/produto'; // Importando as rotas de produto
 import vendedorRoutes from './routes/vendedor'; // Importando as rotas de vendedor
 import mercadopagoRoutes from './routes/mercadoPago'; // Importando as rotas de mercadoPago
 import authRoutes from './routes/authRoutes'; // Importando as rotas de autenticação
+import { setupSwagger } from './swagger/swagger';
 import { autenticarToken } from './controllers/auth/authMiddleware';
 import cors from 'cors';
 
@@ -58,6 +58,8 @@ app.use('/vendedor', vendedorRoutes); // Configurando as rotas de vendedor
 console.log('[INFO] Rotas de vendedor carregadas');
 app.use('/mercadopago', mercadopagoRoutes); // Configurando as rotas de mercadoPago
 console.log('[INFO] Rotas de mercadoPago carregadas');
+setupSwagger(app); // Configurando o Swagger
+// Configurando as rotas de autenticação
 app.use('/auth', authRoutes); // Configurando as rotas de autenticação
 console.log('[INFO] Rotas de autenticação carregadas');
 // Iniciando o servido
