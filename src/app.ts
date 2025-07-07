@@ -1,8 +1,8 @@
 import express from 'express';
-import clienteRoutes from './routes/clientes'; // Importando as rotas de clientes
+import clienteRoutes from './routes/clientes/clientesRoute'; // Importando as rotas de clientes
 import associacaoRoutes from './routes/associacao'; // Importando as rotas de associacao */
 import atendeUmRoutes from './routes/atende_um'; // Importando as rotas de associado
-import feiraRoutes from './routes/feira'; // Importando as rotas de feira
+import feiraRoutes from './routes/feira/feiraRoute'; // Importando as rotas de feira
 import pedidoRoutes from './routes/pedido'; // Importando as rotas de pedido
 import produtoRoutes from './routes/produto'; // Importando as rotas de produto
 import vendedorRoutes from './routes/vendedor'; // Importando as rotas de vendedor
