@@ -64,6 +64,6 @@ app.use('/auth', authRoutes); // Configurando as rotas de autenticação
 console.log('[INFO] Rotas de autenticação carregadas');
 // Iniciando o servido
 
-app.listen(port, () => {
+app.listen(port,'0.0.0.0' ,() => {
   console.log(`Server rodando em http://localhost:${port}`);
 });
