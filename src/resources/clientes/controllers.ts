@@ -39,8 +39,11 @@ export const listarClientesPorId = async (req: Request, res: Response): Promise<
 
 export const criarCliente = async (req: Request, res: Response): Promise<void> => {
   const { cpf, nome, email, telefone, senha } = req.body;
+
   if (!cpf || !nome || !email || !telefone || !senha) {
-    res.status(400).send('Todos os campos são obrigatórios');
+    res.status(400).json({
+      error: "Todos os campos são obrigatórios",
+    });
     return;
   }
 
@@ -48,6 +51,31 @@ export const criarCliente = async (req: Request, res: Response): Promise<void> =
   let imageUrl: string | null = null;
 
   try {
+    
+    const clienteExistente = await prisma.cliente.findFirst({
+      where: {
+        OR: [
+          { cpf },
+          { email }
+        ]
+      }
+    });
+
+    if (clienteExistente) {
+      if (clienteExistente.cpf === cpf) {
+        res.status(409).json({
+          error: "CPF já cadastrado",
+        });
+        return;
+      }
+
+      if (clienteExistente.email === email) {
+        res.status(409).json({
+          error: "Email já cadastrado",
+        });
+        return;
+      }
+    }
 
     if (imageFile) {
       const fileName = `${Date.now()}-${imageFile.originalname}`;
@@ -62,9 +90,11 @@ export const criarCliente = async (req: Request, res: Response): Promise<void> =
         });
 
       if (uploadError) {
-        console.error('Erro no Supabase Storage:', uploadError);
-        res.status(500).send('Erro ao fazer upload da imagem.');
-        return; // Importante parar a execução aqui
+        console.error("Erro no upload:", uploadError);
+        res.status(500).json({
+          error: "Erro ao fazer upload da imagem",
+        });
+        return;
       }
 
       const { data: publicURLData } = supabase.storage
@@ -74,7 +104,6 @@ export const criarCliente = async (req: Request, res: Response): Promise<void> =
       imageUrl = publicURLData.publicUrl;
     }
 
-    console.log("aqui no criar cliente");
     const senha_segura = await bcrypt.hash(senha, saltRounds);
 
     const novoCliente: cliente = await prisma.cliente.create({
@@ -84,16 +113,27 @@ export const criarCliente = async (req: Request, res: Response): Promise<void> =
         email,
         telefone,
         senha: senha_segura,
-        foto_perfil : imageUrl
+        foto_perfil: imageUrl,
       },
-
     });
-    console.log('Cliente criado:', novoCliente);
 
-    res.status(201).json(novoCliente);
-  } catch (error) {
-    console.error('Erro ao criar cliente:', error);
-    res.status(500).send('Erro ao criar cliente');
+    const { senha: _, ...clienteSemSenha } = novoCliente;
+
+    res.status(201).json(clienteSemSenha);
+
+  } catch (error: any) {
+    console.error("Erro ao criar cliente:", error);
+
+    if (error.code === "P2002") {
+      res.status(409).json({
+        error: "CPF ou email já cadastrado",
+      });
+      return;
+    }
+
+    res.status(500).json({
+      error: "Erro interno ao criar cliente",
+    });
   }
 };
 
