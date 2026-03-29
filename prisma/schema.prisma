@@ -58,6 +58,13 @@ model pedido {
   fk_feira               Int?
   fk_cliente             String        @db.VarChar(11)
   mercadopago_payment_id String?       @unique
+  payer_email            String?       @db.VarChar(255)
+  pix_payload            String?       @default("NULL")
+  valor_total            Float?        @default(0)
+  payment_type           String?       @default("NULL")
+  retirada_local         String?       @default("NULL")
+  retirada_data          String?       @default("NULL")
+  retirada_hora          String?       @default("NULL")
   atende_um              atende_um[]
   produtos_no_pedido     item_pedido[]
   cliente                cliente       @relation(fields: [fk_cliente], references: [cpf], onDelete: NoAction, onUpdate: NoAction, map: "fk_cliente")
