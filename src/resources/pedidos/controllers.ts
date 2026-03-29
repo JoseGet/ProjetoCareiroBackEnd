@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import prisma from '../../config/dbConfig';
 import { pedido } from '@prisma/client';
+import BrCode from '../br_code/brCode';
 
-// GET: Buscar pedidos do usuário autenticado
 export const getPedidos = async (req: Request, res: Response): Promise<void> => {
   try {
     const userCpf = (req as any).user?.cpf;
@@ -105,7 +105,16 @@ export const getPedidoById = async (req: Request, res: Response): Promise<void> 
 // POST: Criar novo pedido com produtos
 export const createPedido = async (req: Request, res: Response): Promise<void> => {
   // produtos deve ser um array: [{ produto_id: number, quantidade: number }, ...]
-  const { data_pedido, fk_feira, produtos } = req.body;
+  const { 
+    data_pedido,
+    fk_feira, 
+    produtos, 
+    valor_total,
+    payment_type,
+    retirada_local,
+    retirada_data,
+    retirada_hora
+  } = req.body;
   // CORREÇÃO: fk_cliente deve ser CPF (VarChar(11)), não email
   const fk_cliente = (req as any).user?.cpf;
 
@@ -126,11 +135,28 @@ export const createPedido = async (req: Request, res: Response): Promise<void> =
     // Usar uma transação para garantir a integridade dos dados
     const novoPedidoComItens = await prisma.$transaction(async (tx) => {
       // 1. Criar o registro principal do pedido
+
+      const cpfPayload = new BrCode(
+         "92994669195",
+          "10,0",
+          "José",
+          "",
+          "telefone",
+          "Manaus"
+      )
+
+
       const novoPedido = await tx.pedido.create({
         data: {
           data_pedido: data_pedido ? new Date(data_pedido) : new Date(),
           fk_feira,
           fk_cliente,
+          pix_payload: cpfPayload.generate_qrcp(),
+          valor_total,
+          payment_type,
+          retirada_local,
+          retirada_data,
+          retirada_hora
         }
       });
 
@@ -167,6 +193,8 @@ export const createPedido = async (req: Request, res: Response): Promise<void> =
           feira: true,
         }
       });
+
+      console.log('Pedido completo preparado para resposta:', pedidoCompleto);
       
       return pedidoCompleto;
     });
