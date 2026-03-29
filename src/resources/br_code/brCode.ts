@@ -1,3 +1,4 @@
+/// <reference path="../../types.d.ts" />
 import pkg from 'steplix-emv-qrcps';
 const { Merchant } = pkg;
 

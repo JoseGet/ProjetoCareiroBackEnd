@@ -14,7 +14,7 @@
     "paths": {
       "*": ["src/types/*"]  // Corrija para src/types/*, pois o baseUrl é ./src
     },
-    "typeRoots": ["./node_modules/@types", "./src"]
+    "typeRoots": ["./node_modules/@types"]
   },
   "include": ["src/**/*", "src/types", "src/types.d.ts"]
 }
