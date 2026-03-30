@@ -8,12 +8,9 @@
     "baseUrl": "./",
     "esModuleInterop": true,
     "strict": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "paths": {
-      
-    },
+    "forceConsistentCasingInFileNames": true,
+    // DEIXE ASSIM:
     "typeRoots": ["./node_modules/@types"]
   },
   "include": ["src/**/*"]
