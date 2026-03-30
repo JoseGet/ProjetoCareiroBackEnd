@@ -5,16 +5,14 @@
     "moduleResolution": "Node",
     "outDir": "./dist",
     "rootDir": "./src",
-    "baseUrl": "./src",  // Define o baseUrl corretamente para src
+    "baseUrl": "./",
     "esModuleInterop": true,
     "strict": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "paths": {
-      "*": ["src/types/*"]  // Corrija para src/types/*, pois o baseUrl é ./src
-    },
+    "paths": {},
     "typeRoots": ["./node_modules/@types"]
   },
-  "include": ["src/**/*", "src/types", "src/types.d.ts"]
+  "include": ["src/**/*"]
 }
