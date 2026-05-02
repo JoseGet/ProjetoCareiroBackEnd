@@ -9,6 +9,7 @@ import categoriaRoutes from './resources/categorias/routes'; // Importando as ro
 import vendedorRoutes from './resources/vendedores/routes'; // Importando as rotas de vendedor
 import mercadopagoRoutes from './resources/mercadopago/routes'; // Importando as rotas de mercadoPago
 import authRoutes from './resources/auth/routes'; // Importando as rotas de autenticação
+import abacatepayRoutes from './resources/abacatepay/routes'; // Importando as rotas de abacatePay
 import refreshRoutes from './resources/refresh/routes'; // Importando as rotas de refresh token
 import webhookRoutes from './resources/webhook/routes'; // Importando as rotas de webhook
 import { setupSwagger } from './swagger/swagger';
@@ -101,6 +102,8 @@ app.use('/vendedor', vendedorRoutes);
 app.use('/mercadopago', mercadopagoRoutes); // Configurando as rotas de mercadoPago
 setupSwagger(app); // Configurando o Swagger
 app.use('/auth', authRoutes); // Configurando as rotas de autenticação
+
+app.use('/abacatepay', abacatepayRoutes)
 
 console.log('[INFO] Rotas de autenticação carregadas');
 app.use('/refresh', refreshRoutes); // Configurando as rotas de refresh token
