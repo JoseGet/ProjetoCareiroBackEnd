@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import crypto from "node:crypto";
 
-const ABACATEPAY_PUBLIC_KEY = "t9dXRhHHo3yDEj5pVDYz0frf7q6bMKyMRmxxCPIPp3RCplBfXRxqlC6ZpiWmOqj4L63qEaeUOtrCI8P0VMUgo6iIga2ri9ogaHFs0WIIywSMg0q7RmBfybe1E5XJcfC4IW3alNqym0tXoAKkzvfEjZxV6bE0oG2zJrNNYmUCKZyV0KZ3JS8Votf9EAWWYdiDkMkpbMdPggfh1EqHlVkMiTady6jOR3hyzGEHrIz2Ret0xHKMbiqkr9HS1JhNHDX9";
+const ABACATEPAY_PUBLIC_KEY  = process.env.ABACATEPAY_PUBLIC_KEY || "";
 
 export const webhookPixPago = async (req: Request, res: Response) => {
   try {
@@ -13,7 +13,7 @@ export const webhookPixPago = async (req: Request, res: Response) => {
 
     console.log("Headers recebidos:", req.headers);
     
-    const signature = req.headers["X-Webhook-Signature"] as string;
+    const signature = req.header("X-Webhook-Signature")
 
     if (!signature) {
       res.status(400).json({ error: "Missing signature header" });
