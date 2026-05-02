@@ -43,21 +43,19 @@ export const webhookPixPago = async (req: Request, res: Response) => {
 };
     
 
-export function verifyAbacateSignature(rawBody: string, signatureFromHeader: string): boolean {
+export function verifyAbacateSignature(rawBody: string, signatureFromHeader: string) {
   try {
+    const bodyBuffer = Buffer.from(rawBody, "utf8")
+
     const expectedSig = crypto
       .createHmac("sha256", ABACATEPAY_PUBLIC_KEY)
-      .update(rawBody)
-      .digest("hex"); 
+      .update(bodyBuffer)
+      .digest("base64"); 
 
-    const expectedBuffer = Buffer.from(expectedSig);
-    const headerBuffer = Buffer.from(signatureFromHeader);
+    const A = Buffer.from(expectedSig);
+    const B = Buffer.from(signatureFromHeader);
 
-    if (expectedBuffer.length !== headerBuffer.length) {
-      return false;
-    }
-
-    return crypto.timingSafeEqual(expectedBuffer, headerBuffer);
+    return A.length === B.length && crypto.timingSafeEqual(A, B);
   } catch (e) {
     return false;
   }
