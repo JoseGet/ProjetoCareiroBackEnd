@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import crypto from "node:crypto";
 
-const ABACATEPAY_PUBLIC_KEY  = process.env.ABACATEPAY_API_KEY || "";
+const ABACATEPAY_PUBLIC_KEY  = process.env.ABACATEPAY_PUBLIC_KEY || "";
 
 export const webhookPixPago = async (req: Request, res: Response) => {
   try {
