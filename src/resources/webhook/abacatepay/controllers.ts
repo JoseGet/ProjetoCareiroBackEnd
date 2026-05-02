@@ -8,6 +8,7 @@ export const webhookPixPago = async (req: Request, res: Response) => {
     
     if (req.query.webhookSecret !== process.env.ABACATEPAY_WEBHOOK_SECRET) {
       res.status(401).json({ error: "Unauthorized: Invalid Webhook Secret" });
+      return
     }
 
     
@@ -15,6 +16,7 @@ export const webhookPixPago = async (req: Request, res: Response) => {
 
     if (!signature) {
       res.status(400).json({ error: "Missing signature header" });
+      return
     }
 
     const isRawBodyValid = verifyAbacateSignature(JSON.stringify(req.body), signature);
@@ -22,6 +24,7 @@ export const webhookPixPago = async (req: Request, res: Response) => {
     if (!isRawBodyValid) {
       console.error("Assinatura inválida detectada!");
       res.status(403).json({ error: "Invalid signature" });
+      return
     }
 
     const event = req.body;
