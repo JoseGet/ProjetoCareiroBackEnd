@@ -10,6 +10,7 @@
   },
   "name": "nodejs-express-postgres-sequelize",
   "dependencies": {
+    "@abacatepay/sdk": "^1.2.0",
     "@prisma/client": "^6.19.1",
     "@supabase/supabase-js": "^2.49.4",
     "bcrypt": "^6.0.0",

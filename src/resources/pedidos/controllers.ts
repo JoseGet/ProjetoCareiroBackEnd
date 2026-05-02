@@ -110,6 +110,7 @@ export const createPedido = async (req: Request, res: Response): Promise<void> =
     fk_feira, 
     produtos, 
     valor_total,
+    pix_payload,
     payment_type,
     retirada_local,
     retirada_data,
@@ -136,22 +137,12 @@ export const createPedido = async (req: Request, res: Response): Promise<void> =
     const novoPedidoComItens = await prisma.$transaction(async (tx) => {
       // 1. Criar o registro principal do pedido
 
-      const cpfPayload = new BrCode(
-         "92994669195",
-          "10,0",
-          "José",
-          "",
-          "telefone",
-          "Manaus"
-      )
-
-
       const novoPedido = await tx.pedido.create({
         data: {
           data_pedido: data_pedido ? new Date(data_pedido) : new Date(),
           fk_feira,
           fk_cliente,
-          pix_payload: cpfPayload.generate_qrcp(),
+          pix_payload,
           valor_total,
           payment_type,
           retirada_local,
