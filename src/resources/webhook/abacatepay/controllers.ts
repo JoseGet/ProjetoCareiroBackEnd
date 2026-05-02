@@ -12,7 +12,7 @@ export const webhookPixPago = async (req: Request, res: Response) => {
     }
 
     
-    const signature = req.headers["X-Webhook-Signature"] as string;
+    const signature = req.headers["x-abacatepay-signature"] as string;
 
     if (!signature) {
       res.status(400).json({ error: "Missing signature header" });
