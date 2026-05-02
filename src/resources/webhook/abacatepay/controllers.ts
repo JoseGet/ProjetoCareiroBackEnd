@@ -3,25 +3,25 @@ import crypto from "node:crypto";
 
 const ABACATEPAY_PUBLIC_KEY  = process.env.ABACATEPAY_API_KEY || "";
 
-export const webhookPixPago = async (req: Request, res: Response): Promise<Response> => {
+export const webhookPixPago = async (req: Request, res: Response) => {
   try {
     
     if (req.query.webhookSecret !== process.env.ABACATEPAY_WEBHOOK_SECRET) {
-      return res.status(401).json({ error: "Unauthorized: Invalid Webhook Secret" });
+      res.status(401).json({ error: "Unauthorized: Invalid Webhook Secret" });
     }
 
     
     const signature = req.headers["x-abacatepay-signature"] as string;
 
     if (!signature) {
-      return res.status(400).json({ error: "Missing signature header" });
+      res.status(400).json({ error: "Missing signature header" });
     }
 
     const isRawBodyValid = verifyAbacateSignature(JSON.stringify(req.body), signature);
 
     if (!isRawBodyValid) {
       console.error("Assinatura inválida detectada!");
-      return res.status(403).json({ error: "Invalid signature" });
+      res.status(403).json({ error: "Invalid signature" });
     }
 
     const event = req.body;
@@ -34,11 +34,11 @@ export const webhookPixPago = async (req: Request, res: Response): Promise<Respo
     }
 
     
-    return res.status(200).send("Webhook received");
+    res.status(200).send("Webhook received");
 
   } catch (error) {
     console.error("Erro no processamento do Webhook:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
     

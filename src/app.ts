@@ -12,6 +12,7 @@ import authRoutes from './resources/auth/routes'; // Importando as rotas de aute
 import abacatepayRoutes from './resources/abacatepay/routes'; // Importando as rotas de abacatePay
 import refreshRoutes from './resources/refresh/routes'; // Importando as rotas de refresh token
 import webhookRoutes from './resources/webhook/routes'; // Importando as rotas de webhook
+import webhookAbacatePayRoutes from './resources/webhook/abacatepay/routes'; // Importando as rotas de webhook do abacatePay
 import { setupSwagger } from './swagger/swagger';
 import { autenticarToken } from './resources/auth/authMiddleware';
 import errorHandler from './shared/middlewares/errorHandler';
@@ -104,6 +105,7 @@ setupSwagger(app); // Configurando o Swagger
 app.use('/auth', authRoutes); // Configurando as rotas de autenticação
 
 app.use('/abacatepay', abacatepayRoutes)
+app.use('/webhook/abacatepay', webhookAbacatePayRoutes); 
 
 console.log('[INFO] Rotas de autenticação carregadas');
 app.use('/refresh', refreshRoutes); // Configurando as rotas de refresh token
