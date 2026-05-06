@@ -1,5 +1,8 @@
 import express from 'express';
 import admin from 'firebase-admin'
+import fs from "fs";
+import path from "path";
+import process from 'process';
 import clienteRoutes from './resources/clientes/routes'; // Importando as rotas de clientes
 import associacaoRoutes from './resources/associacoes/routes'; // Importando as rotas de associacao
 import atendeUmRoutes from './resources/atende_um/routes'; // Importando as rotas de associado
@@ -27,8 +30,11 @@ const app = express();
 app.use(express.json());
 const port = process.env.PORT || 3000;
 
+const serviceAccountPath = path.join(process.cwd(), "firebase-adminsdk.json");
+const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, "utf8"));
+
 admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
+    credential: admin.credential.cert(serviceAccount),
 });
 
 // Configuração do CORS
