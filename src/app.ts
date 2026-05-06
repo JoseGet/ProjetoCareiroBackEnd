@@ -1,4 +1,5 @@
 import express from 'express';
+import admin from 'firebase-admin'
 import clienteRoutes from './resources/clientes/routes'; // Importando as rotas de clientes
 import associacaoRoutes from './resources/associacoes/routes'; // Importando as rotas de associacao
 import atendeUmRoutes from './resources/atende_um/routes'; // Importando as rotas de associado
@@ -25,6 +26,10 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 const port = process.env.PORT || 3000;
+
+admin.initializeApp({
+    credential: admin.credential.applicationDefault(),
+});
 
 // Configuração do CORS
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
