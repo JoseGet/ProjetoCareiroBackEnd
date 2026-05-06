@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import crypto from "node:crypto";
+import { getMessaging } from 'firebase-admin/messaging';
+import prisma from '../../../config/dbConfig';
 
 const ABACATEPAY_PUBLIC_KEY  = process.env.ABACATEPAY_PUBLIC_KEY || "";
 
@@ -31,6 +33,27 @@ export const webhookPixPago = async (req: Request, res: Response) => {
     const event = req.body;
     
     console.log(`Evento recebido: ${event.type} para o pedido: ${event.data?.metadata?.pedidoId}`);
+
+    const fcmClientToken = await prisma.cliente.findUnique({
+      where: { cpf: event.data?.customer?.taxId},
+      select: { fcmToken: true }
+    });
+
+    const message = {
+      data: {
+        type: "PAYMENT_CONFIRMED",
+        code: "10002",
+        message: "Oba! Seu Pix foi recebido.",
+        valor: String(event.data.amount)
+      },
+      token: fcmClientToken?.fcmToken
+    }
+
+    getMessaging().send(message).then((response: any) => {
+      console.log('Notificação enviada com sucesso:', response);
+    }).catch((error: any) => {
+      console.error('Erro ao enviar notificação:', error);
+    })
 
     if (event.type === "billing.paid") {
        const { pedidoId } = event.data.metadata;

@@ -10,13 +10,17 @@ datasource db {
 }
 
 model associacao {
-  id_associacao String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  nome          String
-  descricao     String
-  image         String?
-  endereco      String?
-  data_hora     String?
-  vendedor      vendedor[]
+  id_associacao       String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nome                String
+  descricao           String
+  image               String?
+  endereco            String?
+  data_hora           String?
+  disponivel_retirada Boolean    @default(false)
+  pedido              pedido[]
+  vendedor            vendedor[]
+
+  @@index([disponivel_retirada], map: "idx_associacao_disponivel_retirada")
 }
 
 model atende_um {
@@ -39,36 +43,48 @@ model cliente {
   favoritos    favorita_um[]
   pedido       pedido[]
   sacola       sacola_de_compras?
+  fcmToken     String? 
 }
 
 model feira {
-  id_feira    Int      @id @default(autoincrement())
-  nome        String
-  data_hora   String
-  descricao   String
-  image       String?
-  localizacao String?  @db.VarChar(255)
-  pedido      pedido[]
+  id_feira                               Int      @id @default(autoincrement())
+  nome                                   String
+  data_hora                              String
+  descricao                              String
+  image                                  String?
+  localizacao                            String?  @db.VarChar(255)
+  disponivel_retirada                    Boolean  @default(false)
+  pedido                                 pedido[]
+  pedido_pedido_fk_feira_retiradaTofeira pedido[] @relation("pedido_fk_feira_retiradaTofeira")
+
+  @@index([disponivel_retirada], map: "idx_feira_disponivel_retirada")
 }
 
 model pedido {
-  pedido_id              Int           @id @default(autoincrement())
-  data_pedido            DateTime      @default(dbgenerated("CURRENT_DATE")) @db.Date
-  status                 String        @default("PENDENTE")
-  fk_feira               Int?
-  fk_cliente             String        @db.VarChar(11)
-  mercadopago_payment_id String?       @unique
-  payer_email            String?       @db.VarChar(255)
-  pix_payload            String?       @default("NULL")
-  valor_total            Float?        @default(0)
-  payment_type           String?       @default("NULL")
-  retirada_local         String?       @default("NULL")
-  retirada_data          String?       @default("NULL")
-  retirada_hora          String?       @default("NULL")
-  atende_um              atende_um[]
-  produtos_no_pedido     item_pedido[]
-  cliente                cliente       @relation(fields: [fk_cliente], references: [cpf], onDelete: NoAction, onUpdate: NoAction, map: "fk_cliente")
-  feira                  feira?        @relation(fields: [fk_feira], references: [id_feira], onDelete: NoAction, onUpdate: NoAction, map: "fk_feira")
+  pedido_id                             Int           @id @default(autoincrement())
+  data_pedido                           DateTime      @default(dbgenerated("CURRENT_DATE")) @db.Date
+  status                                String        @default("PENDENTE")
+  fk_feira                              Int?
+  fk_cliente                            String        @db.VarChar(11)
+  mercadopago_payment_id                String?       @unique
+  payer_email                           String?       @db.VarChar(255)
+  pix_payload                           String?       @default("NULL")
+  valor_total                           Float?        @default(0)
+  payment_type                          String?       @default("NULL")
+  retirada_local                        String?       @default("NULL")
+  retirada_data                         String?       @default("NULL")
+  retirada_hora                         String?       @default("NULL")
+  fk_associacao_retirada                String?       @db.Uuid
+  fk_feira_retirada                     Int?
+  atende_um                             atende_um[]
+  produtos_no_pedido                    item_pedido[]
+  cliente                               cliente       @relation(fields: [fk_cliente], references: [cpf], onDelete: NoAction, onUpdate: NoAction, map: "fk_cliente")
+  feira                                 feira?        @relation(fields: [fk_feira], references: [id_feira], onDelete: NoAction, onUpdate: NoAction, map: "fk_feira")
+  associacao                            associacao?   @relation(fields: [fk_associacao_retirada], references: [id_associacao], map: "fk_pedido_associacao_retirada")
+  feira_pedido_fk_feira_retiradaTofeira feira?        @relation("pedido_fk_feira_retiradaTofeira", fields: [fk_feira_retirada], references: [id_feira], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([fk_associacao_retirada], map: "idx_pedido_fk_associacao_retirada")
+  @@index([fk_feira_retirada], map: "idx_pedido_fk_feira_retirada")
 }
 
 model categoria {

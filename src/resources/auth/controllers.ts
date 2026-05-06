@@ -10,7 +10,7 @@ import { addRefreshToken } from "./refreshToken";
  */
 export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { email, senha } = req.body;
+    const { email, senha, fcmToken } = req.body;
 
     if (!email || !senha) {
       res.status(400).json({ error: 'Email e senha são obrigatórios' });
@@ -42,6 +42,13 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
       const accessToken = gerarToken(tokenPayload);
       const refreshToken = gerarRefreshToken(tokenPayload);
       addRefreshToken(refreshToken);
+
+      if (cliente && fcmToken){
+        await prisma.cliente.update({
+          where: { email: email },
+          data: { fcmToken: fcmToken } 
+        });
+      }
 
       console.log(`✅ Login realizado: ${cliente.email} (${cliente.tipo_usuario})`);
 
