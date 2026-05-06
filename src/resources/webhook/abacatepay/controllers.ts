@@ -41,7 +41,6 @@ export const webhookPixPago = async (req: Request, res: Response) => {
 
     if (!cpfLimpo) {
       console.warn("⚠️ Webhook sem CPF. Verifique se o evento do AbacatePay contém 'data.customer.taxId'");
-      return res.status(200).send("Evento recebido, mas sem CPF para processar.");
     }
 
     const fcmClientToken = await prisma.cliente.findUnique({
