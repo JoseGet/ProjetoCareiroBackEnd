@@ -34,17 +34,10 @@ export const webhookPixPago = async (req: Request, res: Response) => {
     
     console.log(`Evento recebido: ${event.type} para o pedido: ${event.data?.metadata?.pedidoId}`);
     
-    const taxIdOriginal = event.data?.customer?.taxId;
-    const cpfLimpo = taxIdOriginal ? taxIdOriginal.replace(/\D/g, '') : null;
-
-    console.log(`Buscando cliente com CPF limpo: ${cpfLimpo} (Original: ${taxIdOriginal})`);
-
-    if (!cpfLimpo) {
-      console.warn("⚠️ Webhook sem CPF. Verifique se o evento do AbacatePay contém 'data.customer.taxId'");
-    }
+    const customerEmail = event.data?.customer?.email;
 
     const fcmClientToken = await prisma.cliente.findUnique({
-      where: { cpf: cpfLimpo },
+      where: { email: customerEmail },
       select: { fcmToken: true }
     });
 
