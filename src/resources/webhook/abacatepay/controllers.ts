@@ -1,32 +1,59 @@
 import { Request, Response } from "express";
 import crypto from "node:crypto";
+import { getMessaging } from 'firebase-admin/messaging';
+import prisma from '../../../config/dbConfig';
 
-const ABACATEPAY_PUBLIC_KEY  = process.env.ABACATEPAY_API_KEY || "";
+const ABACATEPAY_PUBLIC_KEY  = process.env.ABACATEPAY_PUBLIC_KEY || "";
 
-export const webhookPixPago = async (req: Request, res: Response): Promise<Response> => {
+export const webhookPixPago = async (req: Request, res: Response) => {
   try {
     
     if (req.query.webhookSecret !== process.env.ABACATEPAY_WEBHOOK_SECRET) {
-      return res.status(401).json({ error: "Unauthorized: Invalid Webhook Secret" });
+      res.status(401).json({ error: "Unauthorized: Invalid Webhook Secret" });
+      return
     }
 
+    console.log("Headers recebidos:", req.headers);
     
-    const signature = req.headers["x-abacatepay-signature"] as string;
+    const signature = req.header("X-Webhook-Signature")
 
     if (!signature) {
-      return res.status(400).json({ error: "Missing signature header" });
+      res.status(400).json({ error: "Missing signature header" });
+      return
     }
 
     const isRawBodyValid = verifyAbacateSignature(JSON.stringify(req.body), signature);
 
     if (!isRawBodyValid) {
       console.error("Assinatura inválida detectada!");
-      return res.status(403).json({ error: "Invalid signature" });
+      res.status(403).json({ error: "Invalid signature" });
+      return
     }
 
     const event = req.body;
     
     console.log(`Evento recebido: ${event.type} para o pedido: ${event.data?.metadata?.pedidoId}`);
+
+    const fcmClientToken = await prisma.cliente.findUnique({
+      where: { cpf: event.data?.customer?.taxId},
+      select: { fcmToken: true }
+    });
+
+    const message = {
+      data: {
+        type: "PAYMENT_CONFIRMED",
+        code: "10002",
+        message: "Oba! Seu Pix foi recebido.",
+        valor: String(event.data.amount)
+      },
+      token: fcmClientToken?.fcmToken
+    }
+
+    getMessaging().send(message).then((response: any) => {
+      console.log('Notificação enviada com sucesso:', response);
+    }).catch((error: any) => {
+      console.error('Erro ao enviar notificação:', error);
+    })
 
     if (event.type === "billing.paid") {
        const { pedidoId } = event.data.metadata;
@@ -34,30 +61,28 @@ export const webhookPixPago = async (req: Request, res: Response): Promise<Respo
     }
 
     
-    return res.status(200).send("Webhook received");
+    res.status(200).send("Webhook received");
 
   } catch (error) {
     console.error("Erro no processamento do Webhook:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
     
 
-export function verifyAbacateSignature(rawBody: string, signatureFromHeader: string): boolean {
+export function verifyAbacateSignature(rawBody: string, signatureFromHeader: string) {
   try {
+    const bodyBuffer = Buffer.from(rawBody, "utf8")
+
     const expectedSig = crypto
       .createHmac("sha256", ABACATEPAY_PUBLIC_KEY)
-      .update(rawBody)
-      .digest("hex"); 
+      .update(bodyBuffer)
+      .digest("base64"); 
 
-    const expectedBuffer = Buffer.from(expectedSig);
-    const headerBuffer = Buffer.from(signatureFromHeader);
+    const A = Buffer.from(expectedSig);
+    const B = Buffer.from(signatureFromHeader);
 
-    if (expectedBuffer.length !== headerBuffer.length) {
-      return false;
-    }
-
-    return crypto.timingSafeEqual(expectedBuffer, headerBuffer);
+    return A.length === B.length && crypto.timingSafeEqual(A, B);
   } catch (e) {
     return false;
   }

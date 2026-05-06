@@ -3,6 +3,6 @@ import { webhookPixPago } from "./controllers";
 
 const router = Router();
 
-router.post("/abacatepay/pix-pago", webhookPixPago);
+router.post("/pix-pago", webhookPixPago);
 
 export default router;

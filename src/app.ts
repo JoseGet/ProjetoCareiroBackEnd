@@ -1,4 +1,5 @@
 import express from 'express';
+import admin from 'firebase-admin'
 import clienteRoutes from './resources/clientes/routes'; // Importando as rotas de clientes
 import associacaoRoutes from './resources/associacoes/routes'; // Importando as rotas de associacao
 import atendeUmRoutes from './resources/atende_um/routes'; // Importando as rotas de associado
@@ -12,6 +13,7 @@ import authRoutes from './resources/auth/routes'; // Importando as rotas de aute
 import abacatepayRoutes from './resources/abacatepay/routes'; // Importando as rotas de abacatePay
 import refreshRoutes from './resources/refresh/routes'; // Importando as rotas de refresh token
 import webhookRoutes from './resources/webhook/routes'; // Importando as rotas de webhook
+import webhookAbacatePayRoutes from './resources/webhook/abacatepay/routes'; // Importando as rotas de webhook do abacatePay
 import { setupSwagger } from './swagger/swagger';
 import { autenticarToken } from './resources/auth/authMiddleware';
 import errorHandler from './shared/middlewares/errorHandler';
@@ -24,6 +26,10 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 const port = process.env.PORT || 3000;
+
+admin.initializeApp({
+    credential: admin.credential.applicationDefault(),
+});
 
 // Configuração do CORS
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
@@ -104,6 +110,7 @@ setupSwagger(app); // Configurando o Swagger
 app.use('/auth', authRoutes); // Configurando as rotas de autenticação
 
 app.use('/abacatepay', abacatepayRoutes)
+app.use('/webhook/abacatepay', webhookAbacatePayRoutes); 
 
 console.log('[INFO] Rotas de autenticação carregadas');
 app.use('/refresh', refreshRoutes); // Configurando as rotas de refresh token
