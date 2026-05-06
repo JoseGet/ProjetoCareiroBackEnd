@@ -42,7 +42,7 @@ export const webhookPixPago = async (req: Request, res: Response) => {
     });
 
     const message = {
-      notidfication: {
+      notification: {
         title: "Pagamento Recebido!",
         body: `Oba! Seu Pix de R$${(event.data.amount / 100).toFixed(2)} foi recebido.`
       },
