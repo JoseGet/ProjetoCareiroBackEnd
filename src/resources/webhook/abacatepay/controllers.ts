@@ -33,20 +33,27 @@ export const webhookPixPago = async (req: Request, res: Response) => {
     const event = req.body;
     
     console.log(`Evento recebido: ${event.type} para o pedido: ${event.data?.metadata?.pedidoId}`);
+    
+    const cpfFormatado = event.data?.customer?.taxId;
+    const cpfApenasNumeros = cpfFormatado ? cpfFormatado.replace(/\D/g, '') : null;
 
     const fcmClientToken = await prisma.cliente.findUnique({
-      where: { cpf: event.data?.customer?.taxId},
+      where: { cpf: cpfApenasNumeros },
       select: { fcmToken: true }
     });
 
     const message = {
+      notidfication: {
+        title: "Pagamento Recebido!",
+        body: `Oba! Seu Pix de R$${(event.data.amount / 100).toFixed(2)} foi recebido.`
+      },
       data: {
         type: "PAYMENT_CONFIRMED",
         code: "10002",
         message: "Oba! Seu Pix foi recebido.",
         valor: String(event.data.amount)
       },
-      token: fcmClientToken?.fcmToken
+      token: fcmClientToken.fcmToken
     }
 
     getMessaging().send(message).then((response: any) => {
