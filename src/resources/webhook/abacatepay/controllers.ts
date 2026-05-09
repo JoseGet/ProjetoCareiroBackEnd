@@ -62,8 +62,8 @@ export const webhookPixPago = async (req: Request, res: Response) => {
     })
 
     if (event.type === "billing.paid") {
-       const { pedidoId } = event.data.metadata;
-       console.log(`Pagamento confirmado para o pedido: ${pedidoId}`);
+       const { pedidoId } = event.data.metadata.pedidoId;
+       await atualizarPedido(pedidoId);
     }
 
     
@@ -92,4 +92,18 @@ export function verifyAbacateSignature(rawBody: string, signatureFromHeader: str
   } catch (e) {
     return false;
   }
+}
+
+async function atualizarPedido(pedidoId: number) {
+    try {
+        const pedidoAtualizado = await prisma.pedido.update({
+            where: { pedido_id: pedidoId },
+            data: {
+                status: "CONFIRMADO",
+            }
+        });
+        console.log("Pedido atualizado com sucesso:", pedidoAtualizado);
+    } catch (error) {
+        console.error("Error updating pedido:", error);
+    }
 }
