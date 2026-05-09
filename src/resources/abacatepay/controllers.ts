@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { AbacatePay } from "@abacatepay/sdk";
+import prisma from "src/config/dbConfig";
 
 export const criarPagamentoPix = async (req: Request, res: Response): Promise<void> => {
 
@@ -47,6 +48,8 @@ export const criarPagamentoPix = async (req: Request, res: Response): Promise<vo
             })
         });
 
+        atualizarPedido(pedidoId, (await response.json()).id)
+
         const paymentData = await response.json();
         res.status(response.status).json(paymentData);
 
@@ -55,6 +58,20 @@ export const criarPagamentoPix = async (req: Request, res: Response): Promise<vo
         res.status(500).json({ error: "Internal server error" });
     }
 
+}
+
+async function atualizarPedido(pedidoId: number, pix_payment_id: string) {
+    try {
+        const pedidoAtualizado = await prisma.pedido.update({
+            where: { pedido_id: pedidoId },
+            data: {
+                pix_payment_id,
+            }
+        });
+        console.log("Pedido atualizado com sucesso:", pedidoAtualizado);
+    } catch (error) {
+        console.error("Error updating pedido:", error);
+    }
 }
 
 export default criarPagamentoPix
