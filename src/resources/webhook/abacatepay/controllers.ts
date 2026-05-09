@@ -31,8 +31,10 @@ export const webhookPixPago = async (req: Request, res: Response) => {
     }
 
     const event = req.body;
+
+    const payload = event.data;
     
-    console.log(`Evento recebido: ${event.type} para o pedido: ${event.data?.metadata?.pedidoId}`);
+    console.log(`Evento recebido: ${event.type} para o pedido: ${event.payload.metadata.pedidoId}`);
     
     const customerEmail = event.data?.customer?.email;
 
@@ -61,7 +63,7 @@ export const webhookPixPago = async (req: Request, res: Response) => {
       console.error('Erro ao enviar notificação:', error);
     })
 
-    const pedidoId = Number(event.data.metadata.pedidoId);
+    const pedidoId = payload.metadata.pedidoId;
     await atualizarPedido(pedidoId);
 
     
