@@ -108,6 +108,7 @@ export const createPedido = async (req: Request, res: Response): Promise<void> =
   const { 
     data_pedido,
     fk_feira, 
+    status,
     produtos, 
     valor_total,
     pix_payment_id,
@@ -145,6 +146,7 @@ export const createPedido = async (req: Request, res: Response): Promise<void> =
           pix_payment_id,
           valor_total,
           payment_type,
+          status,
           retirada_local,
           retirada_data,
           retirada_hora
