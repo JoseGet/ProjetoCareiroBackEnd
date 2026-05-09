@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AbacatePay } from "@abacatepay/sdk";
-import prisma from "src/config/dbConfig";
+import prisma from '../../config/dbConfig';
 
 export const criarPagamentoPix = async (req: Request, res: Response): Promise<void> => {
 
