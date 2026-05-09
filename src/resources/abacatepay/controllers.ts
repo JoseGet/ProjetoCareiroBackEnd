@@ -48,9 +48,13 @@ export const criarPagamentoPix = async (req: Request, res: Response): Promise<vo
             })
         });
 
-        atualizarPedido(pedidoId, (await response.json()).id)
-
         const paymentData = await response.json();
+
+        if (!response.ok) {
+            return res.status(response.status).json(paymentData);
+        }
+
+        await atualizarPedido(pedidoId, paymentData.data.id);
         res.status(response.status).json(paymentData);
 
     } catch (error) {
