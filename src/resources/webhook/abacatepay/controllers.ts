@@ -30,13 +30,13 @@ export const webhookPixPago = async (req: Request, res: Response) => {
       return
     }
 
-    const event = req.body;
+    const payload = req.body;
 
-    const payload = event.data;
+    const data = payload.data;
     
-    console.log(`Evento recebido: ${event.type} para o pedido: ${event.payload.metadata.pedidoId}`);
+    console.log(`Evento recebido: ${payload.event} para o pedido: ${data.metadata.pedidoId}`);
     
-    const customerEmail = event.data?.customer?.email;
+    const customerEmail = data?.customer?.email;
 
     const fcmClientToken = await prisma.cliente.findUnique({
       where: { email: customerEmail },
@@ -46,13 +46,13 @@ export const webhookPixPago = async (req: Request, res: Response) => {
     const message = {
       notification: {
         title: "Pagamento Recebido!",
-        body: `Oba! Seu Pix de R$${(event.data.amount / 100).toFixed(2)} foi recebido.`
+        body: `Oba! Seu Pix de R$${(data.amount / 100).toFixed(2)} foi recebido.`
       },
       data: {
         type: "PAYMENT_CONFIRMED",
         code: "10002",
         message: "Oba! Seu Pix foi recebido.",
-        valor: String(event.data.amount)
+        valor: String(data.transparent.amount)
       },
       token: fcmClientToken.fcmToken
     }
