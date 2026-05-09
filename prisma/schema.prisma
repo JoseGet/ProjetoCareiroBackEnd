@@ -40,10 +40,10 @@ model cliente {
   senha        String             @db.VarChar(100)
   tipo_usuario TipoUsuario        @default(CLIENTE)
   foto_perfil  String?
+  fcmToken     String?
   favoritos    favorita_um[]
   pedido       pedido[]
   sacola       sacola_de_compras?
-  fcmToken     String? 
 }
 
 model feira {
@@ -68,7 +68,7 @@ model pedido {
   fk_cliente                            String        @db.VarChar(11)
   mercadopago_payment_id                String?       @unique
   payer_email                           String?       @db.VarChar(255)
-  pix_payload                           String?       @default("NULL")
+  pix_payment_id                        String?       @default("NULL")
   valor_total                           Float?        @default(0)
   payment_type                          String?       @default("NULL")
   retirada_local                        String?       @default("NULL")
