@@ -14,11 +14,11 @@ export const criarPagamentoPix = async (req: Request, res: Response): Promise<vo
                 email,
                 taxId,
                 cellphone,
+            },
+            metadata: {
+                pedidoId
             }
         },
-        metadata: {
-            pedidoId
-        }
     } = req.body;
 
     try {
@@ -39,11 +39,11 @@ export const criarPagamentoPix = async (req: Request, res: Response): Promise<vo
                         email,
                         taxId,
                         cellphone
+                    },
+                    metadata: {
+                        pedidoId
                     }
                 },
-                metadata: {
-                    pedidoId
-                }
             })
         });
 
