@@ -61,7 +61,7 @@ export const webhookPixPago = async (req: Request, res: Response) => {
       console.error('Erro ao enviar notificação:', error);
     })
 
-    const { pedidoId } = event.data.metadata.pedidoId;
+    const pedidoId = event.data.metadata.pedidoId;
     await atualizarPedido(pedidoId);
 
     
