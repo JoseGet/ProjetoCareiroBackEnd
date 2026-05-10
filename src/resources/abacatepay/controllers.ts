@@ -60,6 +60,32 @@ export const criarPagamentoPix = async (req: Request, res: Response): Promise<vo
 
 }
 
+export const listarPagamentoPix = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { id } = req.query;
+
+        const params = new URLSearchParams({
+            id: String(id)
+        });
+
+        const response = await fetch(`https://api.abacatepay.com/v2/transparents/list?${params.toString()}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${process.env.ABACATEPAY_API_KEY}`
+            },
+        });
+
+        const paymentData = await response.json();
+        res.status(response.status).json(paymentData);
+
+    } catch (error) {
+        console.error("Error creating payment:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+
 async function atualizarPedido(pedidoId: number, pix_payment_id: string) {
     try {
         const pedidoAtualizado = await prisma.pedido.update({
@@ -74,4 +100,7 @@ async function atualizarPedido(pedidoId: number, pix_payment_id: string) {
     }
 }
 
-export default criarPagamentoPix
+export default {
+    criarPagamentoPix,
+    listarPagamentoPix
+};
