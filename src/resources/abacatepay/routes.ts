@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.get("/payment/done/pix", listarPagamentoPix)
 
-router.post("/payment/pix", criarPagamentoPix);
+router.post("/payment/pix", isAuth, criarPagamentoPix);
 
 export default router;
