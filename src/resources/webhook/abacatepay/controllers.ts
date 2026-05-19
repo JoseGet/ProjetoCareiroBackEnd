@@ -46,7 +46,7 @@ export const webhookPixPago = async (req: Request, res: Response) => {
     const message = {
       notification: {
         title: "Pagamento Recebido!",
-        body: `Oba! Seu Pix de R$${(data.amount / 100).toFixed(2)} foi recebido.`
+        body: `Oba! Seu pagamento Pix foi recebido e o pedido foi confirmado.`
       },
       data: {
         type: "PAYMENT_CONFIRMED",
