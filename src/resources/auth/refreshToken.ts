@@ -41,7 +41,7 @@ export const refreshToken = async (req: Request, res: Response, next: NextFuncti
     }
 
     // Gerar novos tokens
-    const tokenPayload = { cpf: cliente.cpf, email: cliente.email };
+    const tokenPayload = { cpf: cliente.cpf, email: cliente.email, tipo: 'CLIENTE' };
     const newAccessToken = gerarToken(tokenPayload);
     const newRefreshToken = gerarRefreshToken(tokenPayload);
 
